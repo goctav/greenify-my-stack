@@ -1,19 +1,16 @@
 package org.gms.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NonNull;
 
 import java.util.Collection;
 
-
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-@JsonIgnoreProperties
-public class StackDto {
+public class StackDetailsDto {
 
+    @NonNull
     private Long id;
 
     @NonNull
@@ -24,4 +21,6 @@ public class StackDto {
 
     @NonNull
     private Collection<ResourceDto> resources;
+
+    private double carbonEmissionRating;
 }

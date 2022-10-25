@@ -12,6 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(value = AccessLevel.PACKAGE)
 @Getter
+@Builder
 public class Stack {
 
     @Id
@@ -20,6 +21,9 @@ public class Stack {
 
     @NonNull
     private String name;
+
+    @NonNull
+    private String region;
 
     @NonNull
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -44,6 +48,7 @@ public class Stack {
         return "Stack{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", region='" + region + '\'' +
                 ", resources=" + resources +
                 '}';
     }

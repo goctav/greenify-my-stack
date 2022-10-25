@@ -13,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(value = AccessLevel.PACKAGE)
 @Getter
+@Builder
 public class Resource {
 
     @Id

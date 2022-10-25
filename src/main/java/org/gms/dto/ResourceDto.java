@@ -8,8 +8,10 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@JsonIgnoreProperties({"id"})
+@JsonIgnoreProperties
 public class ResourceDto {
+
+    private Long id;
 
     @NonNull
     private String name;
