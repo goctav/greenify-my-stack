@@ -28,7 +28,7 @@ public class ExploreController {
         Collection<StackDto> discoveredStacks = stackService.explore();
         TypeReference<Stack> ref = new TypeReference<>() {};
         List<Stack> stacks = discoveredStacks.stream()
-                .map(stack -> Converters.convertObjectTo(stack, ref))
+                .map(stack -> Converters.convertObjectToType(stack, ref))
                 .collect(Collectors.toList());
         stackRepository.saveAll(stacks);
     }

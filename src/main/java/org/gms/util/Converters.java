@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public final class Converters {
-    public static <T> T convertObjectTo(Object o, TypeReference<T> reference) {
+    public static <T> T convertObjectToType(Object o, TypeReference<T> reference) {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.convertValue(o, reference);
     }

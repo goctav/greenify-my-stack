@@ -1,20 +1,20 @@
 package org.gms.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
 import jakarta.inject.Inject;
-import org.gms.repo.domain.Stack;
 import org.gms.dto.StackDto;
 import org.gms.repo.StackRepository;
-import org.gms.util.Converters;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import static org.gms.util.Converters.convertObjectToType;
 
 @Controller("/stack")
 public class StacksController {
@@ -24,13 +24,15 @@ public class StacksController {
 
     @Get
     @Produces(MediaType.TEXT_JSON)
-    public Collection<StackDto> getAll() throws JsonProcessingException {
+    public ValidResponseWrapper<Collection<StackDto>> getAll() {
 
         TypeReference<StackDto> typeReference = new TypeReference<>() {};
 
-        Iterable<Stack> stacks = stackRepository.findAll();
-        return StreamSupport.stream(stacks.spliterator(), false)
-                .map(stack -> Converters.convertObjectTo(stack, typeReference))
+        List<StackDto> stacks = StreamSupport.stream(stackRepository.findAll().spliterator(), false)
+                .map(stack -> convertObjectToType(stack, typeReference))
                 .collect(Collectors.toList());
+        return ValidResponseWrapper.<Collection<StackDto>>builder()
+                .data(stacks)
+                .build();
     }
 }
