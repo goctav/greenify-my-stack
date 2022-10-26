@@ -1,5 +1,6 @@
 package org.gms.controller.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import io.micronaut.http.HttpStatus;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,9 @@ public class ErrorResponseWrapper {
 
         @NonNull
         private HttpStatus type;
+
         @NonNull
+        @JsonInclude(JsonInclude.Include.NON_NULL)
         private String[] messages;
     }
 }
