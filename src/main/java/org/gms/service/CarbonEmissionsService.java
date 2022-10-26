@@ -2,12 +2,13 @@ package org.gms.service;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NonNull;
+import org.gms.dto.StackDto;
 
 public interface CarbonEmissionsService {
 
     CarbonEmissionRating getRatingForRegion(String region);
 
+    CarbonEmissionRating getRatingForStack(StackDto stack);
 
     @AllArgsConstructor
     @Getter

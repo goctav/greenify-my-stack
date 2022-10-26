@@ -5,8 +5,13 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Produces;
+import jakarta.inject.Inject;
 import org.gms.controller.util.ValidResponseWrapper;
+import org.gms.dto.CompanyRatingDto;
 import org.gms.dto.RegionRatingDto;
+import org.gms.dto.StackDto;
+import org.gms.service.CarbonEmissionsService;
+import org.gms.service.StackService;
 
 import java.time.Instant;
 import java.util.Collection;
@@ -15,6 +20,12 @@ import java.util.stream.Collectors;
 
 @Controller("/emission")
 public class EmissionsController {
+
+    @Inject
+    private StackService stackService;
+
+    @Inject
+    CarbonEmissionsService carbonEmissionsService;
 
     private static final List<String> knownRegions = List.of(
             "us-east-2",
@@ -56,5 +67,22 @@ public class EmissionsController {
                 .data(ratings)
                 .build();
         return HttpResponse.ok(response);
+    }
+
+    @Get("/company")
+    @Produces(MediaType.TEXT_JSON)
+    public HttpResponse<ValidResponseWrapper<CompanyRatingDto>> getCompanyRating() {
+        Collection<StackDto> allStacks = stackService.getAll();
+        double rating = allStacks.stream()
+                .map(stack -> carbonEmissionsService.getRatingForStack(stack))
+                .mapToDouble(CarbonEmissionsService.CarbonEmissionRating::getRating)
+                .sum();
+        CompanyRatingDto companyRating = CompanyRatingDto.builder()
+                .name("COMPANY_NAME")
+                .rating(rating)
+                .build();
+        return HttpResponse.ok(ValidResponseWrapper.<CompanyRatingDto>builder()
+                .data(companyRating)
+                .build());
     }
 }
