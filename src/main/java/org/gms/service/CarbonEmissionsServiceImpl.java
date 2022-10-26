@@ -6,6 +6,6 @@ import jakarta.inject.Singleton;
 public class CarbonEmissionsServiceImpl implements CarbonEmissionsService {
 
     public CarbonEmissionRating getRatingForRegion(String region) {
-        return new CarbonEmissionRating(123);
+        return new CarbonEmissionRating(Math.random() * 100);
     }
 }

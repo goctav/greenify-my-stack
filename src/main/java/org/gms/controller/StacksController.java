@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import org.gms.controller.util.ValidResponseWrapper;
 import org.gms.dto.StackDetailsDto;
 import org.gms.dto.StackDto;
+import org.gms.dto.StackSummaryDto;
 import org.gms.service.CarbonEmissionsService;
 import org.gms.service.StackService;
 
@@ -27,34 +28,42 @@ public class StacksController {
 
     @Get
     @Produces(MediaType.TEXT_JSON)
-    public HttpResponse<ValidResponseWrapper<Collection<StackDetailsDto>>> getAll() {
+    public HttpResponse<ValidResponseWrapper<Collection<StackSummaryDto>>> getAll() {
 
-        Collection<StackDetailsDto> stacks = stackService.getAll().stream()
-                .map(this::toStackDetailsDto)
+        Collection<StackSummaryDto> stacks = stackService.getAll().stream()
+                .map(this::toStackSummaryDto)
                 .collect(Collectors.toList());
-        ValidResponseWrapper<Collection<StackDetailsDto>> response = ValidResponseWrapper.<Collection<StackDetailsDto>>builder()
+        ValidResponseWrapper<Collection<StackSummaryDto>> response = ValidResponseWrapper.<Collection<StackSummaryDto>>builder()
                 .data(stacks)
                 .build();
         return HttpResponse.ok(response);
     }
 
-    private StackDetailsDto toStackDetailsDto(StackDto stack) {
-        double rating = carbonEmissionsService.getRatingForRegion(stack.getRegion()).getRating();
-        return StackDetailsDto.builder()
+    private StackSummaryDto toStackSummaryDto(StackDto stack) {
+        return StackSummaryDto.builder()
                 .id(stack.getId())
                 .name(stack.getName())
                 .region(stack.getRegion())
-                .resources(stack.getResources())
-                .carbonEmissionRating(rating)
                 .build();
     }
 
     @Get("/{id}")
     @Produces(MediaType.TEXT_JSON)
-    public HttpResponse<ValidResponseWrapper<StackDto>> getById(@NotNull Long id) {
+    public HttpResponse<ValidResponseWrapper<StackDetailsDto>> getById(@NotNull Long id) {
         return stackService.getById(id)
-                .map(s -> ValidResponseWrapper.<StackDto>builder().data(s).build())
+                .map(this::toStackDetailsDto)
+                .map(s -> ValidResponseWrapper.<StackDetailsDto>builder().data(s).build())
                 .map(HttpResponse::ok)
                 .orElseThrow(() -> new RuntimeException(String.format("Could not find stack with id: '%s'", id)));
+    }
+
+    private StackDetailsDto toStackDetailsDto(StackDto stack) {
+        return StackDetailsDto.builder()
+                .id(stack.getId())
+                .name(stack.getName())
+                .region(stack.getRegion())
+                .resources(stack.getResources())
+                .carbonEmissionRating(carbonEmissionsService.getRatingForRegion(stack.getRegion()).getRating())
+                .build();
     }
 }
